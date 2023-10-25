@@ -1,5 +1,6 @@
 package com.procesos.tienda.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -30,6 +31,7 @@ public class User {
     @NotNull(message = "password is required")
     @Size(min = 8, max = 15, message = "password min 8 characters and max 15")
     private String password;
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     List<Address> addressList;
 }
