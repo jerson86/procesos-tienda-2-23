@@ -35,4 +35,20 @@ public class CustomExceptionHandler {
         });
         return errors;
     }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<Object> handleAlreadyExistsException(AlreadyExistsException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("Date: ", LocalDate.now().toString());
+        response.put("Message: ", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<?> handleAuthenticationFailedException(AuthenticationFailedException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDate.now().toString());
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    }
 }
