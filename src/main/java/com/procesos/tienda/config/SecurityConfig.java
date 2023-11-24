@@ -42,7 +42,8 @@ public class SecurityConfig{
                                 (request, response, authException) -> {
                                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                                 }
-                        ))
+                        )
+                )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
