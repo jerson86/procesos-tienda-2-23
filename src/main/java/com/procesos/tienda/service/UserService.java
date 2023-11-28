@@ -1,5 +1,6 @@
 package com.procesos.tienda.service;
 
+import com.procesos.tienda.exception.AlreadyExistsException;
 import com.procesos.tienda.exception.NotFoundException;
 import com.procesos.tienda.model.User;
 import com.procesos.tienda.repository.UserRepository;
@@ -20,6 +21,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User createUser(User userReq){
+        Optional<User> existingUserByEmail = userRepository.findByEmail(userReq.getEmail());
+        if (existingUserByEmail.isPresent()) {
+            throw new AlreadyExistsException(Constants.USER_EMAIL_EXISTS.getMessage());
+        }
         userReq.setPassword(passwordEncoder.encode(userReq.getPassword()));
         return userRepository.save(userReq);
     }
@@ -36,7 +41,13 @@ public class UserService {
     public User updateUser(User userReq, Long id){
         Optional<User> userBd = userRepository.findById(id);
         if(userBd.isEmpty()){
-            throw new NotFoundException(Constants.USER_NOT_FOUND.getMessage());
+            throw new NotFoundException("User not found");
+        }
+        if(!userBd.get().getEmail().equals(userReq.getEmail())){
+            Optional<User> existingUserByEmail = userRepository.findByEmail(userReq.getEmail());
+            if (existingUserByEmail.isPresent()) {
+                throw new AlreadyExistsException(Constants.USER_EMAIL_EXISTS.getMessage());
+            }
         }
         userBd.get().setFirstName(userReq.getFirstName());
         userBd.get().setLastName(userReq.getLastName());
